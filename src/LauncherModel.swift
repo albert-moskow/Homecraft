@@ -18,8 +18,8 @@ final class LauncherModel: ObservableObject {
     private var gameProcess: Process?
 
     // Замени на свой репозиторий после загрузки на GitHub.
-    nonisolated static let feedURL = "https://raw.githubusercontent.com/albert-moscow/Homecraft/main/latest.json"
-    nonisolated static let packURL = "https://raw.githubusercontent.com/albert-moscow/Homecraft/main/pack.json"
+    nonisolated static let feedURL = "https://raw.githubusercontent.com/albert-moskow/Homecraft/main/latest.json"
+    nonisolated static let packURL = "https://raw.githubusercontent.com/albert-moskow/Homecraft/main/pack.json"
 
     init() {
         nickname = UserDefaults.standard.string(forKey: "nickname") ?? ""

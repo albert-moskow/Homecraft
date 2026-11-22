@@ -1,0 +1,4 @@
+build/
+*.zip
+latest.json
+AppIcon.iconset/

@@ -1,0 +1,160 @@
+{
+ "version": "1.0.0",
+ "name": "HomeCraft",
+ "minecraftVersion": "1.21.1",
+ "neoForgeVersion": "21.1.267",
+ "files": [
+  {
+   "path": "mods/BetterThirdPerson-neoforge-1.9.0.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/BetterThirdPerson-neoforge-1.9.0.jar",
+   "sha1": "e91af996b413bb498e276bf410d0deff52a34a74",
+   "size": 60941,
+   "side": "both"
+  },
+  {
+   "path": "mods/CreativeCore_NEOFORGE_v2.13.54_mc1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/CreativeCore_NEOFORGE_v2.13.54_mc1.21.1.jar",
+   "sha1": "07db1f441349db503fc21a146606121747780b7b",
+   "size": 1237192,
+   "side": "both"
+  },
+  {
+   "path": "mods/PlayerRevive_NEOFORGE_v2.1.2_mc1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/PlayerRevive_NEOFORGE_v2.1.2_mc1.21.1.jar",
+   "sha1": "6cef210a38a21b5f2df5c21231c0b98debfac4b2",
+   "size": 5308835,
+   "side": "both"
+  },
+  {
+   "path": "mods/Quick Skin - NeoForge - 1.21.1-4.2.0.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/Quick%20Skin%20-%20NeoForge%20-%201.21.1-4.2.0.jar",
+   "sha1": "32341d946d7642b9d8100e16b181e74177fd0364",
+   "size": 5954855,
+   "side": "both"
+  },
+  {
+   "path": "mods/Rampart-neoforge-1.1.0+1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/Rampart-neoforge-1.1.0+1.21.1.jar",
+   "sha1": "4f8384c07ec38e45c2696e22cb7d31ff62b0b11e",
+   "size": 98992,
+   "side": "both"
+  },
+  {
+   "path": "mods/architectury-13.0.12-neoforge.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/architectury-13.0.12-neoforge.jar",
+   "sha1": "646dace27624ac08ad8d229fe15f6601a8b7fbb2",
+   "size": 584731,
+   "side": "both"
+  },
+  {
+   "path": "mods/citadel-2.7.1-1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/citadel-2.7.1-1.21.1.jar",
+   "sha1": "9d7873f74b418f4f83adf2ae41af75d2e8217cd6",
+   "size": 3033076,
+   "side": "both"
+  },
+  {
+   "path": "mods/create-1.21.1-6.0.10.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/create-1.21.1-6.0.10.jar",
+   "sha1": "0e97e49837bed766e6f28a4c95b04885d6acc353",
+   "size": 19123767,
+   "side": "both"
+  },
+  {
+   "path": "mods/create_connected-1.3.3-mc1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/create_connected-1.3.3-mc1.21.1.jar",
+   "sha1": "96ae45fa44cd7028a31b9613cb672009e811b145",
+   "size": 6786783,
+   "side": "both"
+  },
+  {
+   "path": "mods/emotecraft-for-MC1.21.1-2.4.12-neoforge.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/emotecraft-for-MC1.21.1-2.4.12-neoforge.jar",
+   "sha1": "1228c7597c4b6cbaec10a090f9b5b471ca9042d4",
+   "size": 861829,
+   "side": "both"
+  },
+  {
+   "path": "mods/ftb-library-neoforge-2101.1.40.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/ftb-library-neoforge-2101.1.40.jar",
+   "sha1": "e5f24391a447754dbc6d37d866981f47d67bb664",
+   "size": 1643436,
+   "side": "both"
+  },
+  {
+   "path": "mods/ftb-quests-neoforge-2101.1.39.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/ftb-quests-neoforge-2101.1.39.jar",
+   "sha1": "d5a0de6ad0517fd843ea830b49b06287c0686906",
+   "size": 1670999,
+   "side": "both"
+  },
+  {
+   "path": "mods/ftb-teams-neoforge-2101.1.12.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/ftb-teams-neoforge-2101.1.12.jar",
+   "sha1": "9c831fbbbccf2178827c3ccf278b2f2a0ce57306",
+   "size": 308430,
+   "side": "both"
+  },
+  {
+   "path": "mods/homecrafttab-1.0.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/homecrafttab-1.0.1.jar",
+   "sha1": "210fab26223139565e59b2a203da212412e118d4",
+   "size": 2880,
+   "side": "both"
+  },
+  {
+   "path": "mods/iceandfire-neoforge-2.1.13-beta.14-1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/iceandfire-neoforge-2.1.13-beta.14-1.21.1.jar",
+   "sha1": "8b51160942e2ecd8be44c23f500609f0c59df303",
+   "size": 21998117,
+   "side": "both"
+  },
+  {
+   "path": "mods/justsit-1.0.0-neoforge-1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/justsit-1.0.0-neoforge-1.21.1.jar",
+   "sha1": "4b88b6e7cbd611f7f675bdfb1d5d4e1f0ffa14fa",
+   "size": 22386,
+   "side": "both"
+  },
+  {
+   "path": "mods/kotlinforforge-5.13.0-all.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/kotlinforforge-5.13.0-all.jar",
+   "sha1": "b1d5563f4e3db9ec4a4a2b371560aa171d6de237",
+   "size": 7364729,
+   "side": "both"
+  },
+  {
+   "path": "mods/lambdynamiclights-4.8.11+1.21.1.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/lambdynamiclights-4.8.11+1.21.1.jar",
+   "sha1": "7b5afc75a094b4e8a7118f9856eec959b10f2422",
+   "size": 2023375,
+   "side": "both"
+  },
+  {
+   "path": "mods/letsdo-farm_and_charm-neoforge-1.1.29.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/letsdo-farm_and_charm-neoforge-1.1.29.jar",
+   "sha1": "60b4e599fafc84fb6854d5ef771ee6ae8981a920",
+   "size": 3414667,
+   "side": "both"
+  },
+  {
+   "path": "mods/letsdo-vinery-neoforge-1.5.6.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/letsdo-vinery-neoforge-1.5.6.jar",
+   "sha1": "2e2866ba9abdfff57509b291b76567054e1d5065",
+   "size": 2570708,
+   "side": "both"
+  },
+  {
+   "path": "mods/voicechat-neoforge-1.21.1-2.6.27.jar",
+   "url": "https://github.com/albert-moscow/Homecraft/raw/main/mods/voicechat-neoforge-1.21.1-2.6.27.jar",
+   "sha1": "8aded3a22614a8e1641973623e7817dccea513fa",
+   "size": 4936802,
+   "side": "both"
+  }
+ ],
+ "jvmArgs": [
+  "-XX:+UseG1GC",
+  "-XX:MaxGCPauseMillis=100",
+  "-XX:+ParallelRefProcEnabled"
+ ]
+}

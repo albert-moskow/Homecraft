@@ -115,8 +115,70 @@ enum Vanilla {
         let indexFile = indexes.appendingPathComponent("\(meta.assetIndex.id).json")
         try Net.download(meta.assetIndex.url, to: indexFile, expectedSha1: meta.assetIndex.sha1)
 
+        // 4. Объекты ассетов: без них модели и звуки не грузятся.
+        progress("Ресурсы игры", 0.82)
+        try downloadAssetObjects(indexFile: indexFile, assetsDir: assetsDir,
+                                 progress: progress)
         progress("Готово", 1.0)
         return classpath
+    }
+
+    /// Скачивает объекты из asset index параллельно (по 16 потоков).
+    /// Кэш общий: путь = objects/<первые 2 символа hash>/<hash>.
+    static func downloadAssetObjects(indexFile: URL, assetsDir: URL,
+                                     progress: @escaping (String, Double) -> Void) throws {
+        guard let data = try? Data(contentsOf: indexFile),
+              let root = try? JSONSerialization.jsonObject(with: data) as? [String: Any],
+              let objects = root["objects"] as? [String: Any] else { return }
+
+        struct Task { let hash: String; let dest: URL; let url: String }
+        var pending: [Task] = []
+        let objectsDir = assetsDir.appendingPathComponent("objects", isDirectory: true)
+
+        for (_, value) in objects {
+            guard let info = value as? [String: Any],
+                  let hash = info["hash"] as? String else { continue }
+            let prefix = String(hash.prefix(2))
+            let dest = objectsDir.appendingPathComponent(prefix).appendingPathComponent(hash)
+            if FileManager.default.fileExists(atPath: dest.path) { continue }
+            pending.append(Task(hash: hash, dest: dest,
+                                url: "https://resources.download.minecraft.net/\(prefix)/\(hash)"))
+        }
+
+        let total = pending.count
+        if total == 0 { return }
+
+        let lock = NSLock()
+        var done = 0
+        var failed = 0
+
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 16
+
+        for task in pending {
+            queue.addOperation {
+                do {
+                    try Net.download(task.url, to: task.dest, expectedSha1: task.hash)
+                } catch {
+                    lock.lock(); failed += 1; lock.unlock()
+                }
+                lock.lock()
+                done += 1
+                let current = done
+                lock.unlock()
+
+                if current % 100 == 0 || current == total {
+                    progress("Ресурсы \(current)/\(total)",
+                             0.82 + 0.17 * Double(current) / Double(total))
+                }
+            }
+        }
+        queue.waitUntilAllOperationsAreFinished()
+
+        if failed > 0 {
+            // Не валим запуск: игра стартует и без части ресурсов.
+            progress("Ресурсы: пропущено \(failed)", 0.99)
+        }
     }
 
     static func allowed(_ rules: [VersionMeta.Rule]?) -> Bool {

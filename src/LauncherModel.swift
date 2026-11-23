@@ -15,6 +15,20 @@ final class LauncherModel: ObservableObject {
     @Published var packVersion: String = "—"
 
     private let paths = Paths.standard()
+
+    /// Пишем ход выполнения в файл: без этого зависания неотлаживаемы.
+    nonisolated static func log(_ msg: String) {
+        let line = "[\(Date())] \(msg)\n"
+        let dir = FileManager.default.urls(for: .applicationSupportDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("HomeCraft/logs", isDirectory: true)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        let f = dir.appendingPathComponent("launcher.log")
+        if let h = try? FileHandle(forWritingTo: f) {
+            h.seekToEndOfFile(); h.write(line.data(using: .utf8)!); try? h.close()
+        } else {
+            try? line.write(to: f, atomically: true, encoding: .utf8)
+        }
+    }
     private var gameProcess: Process?
 
     // Замени на свой репозиторий после загрузки на GitHub.
@@ -27,7 +41,9 @@ final class LauncherModel: ObservableObject {
         if saved > 0 { memoryMB = saved }
     }
 
-    var canLaunch: Bool { !nickname.trimmingCharacters(in: .whitespaces).isEmpty && !isBusy }
+    var canLaunch: Bool {
+        !nickname.trimmingCharacters(in: .whitespaces).isEmpty && !isBusy && gameProcess == nil
+    }
 
     func savePrefs() {
         UserDefaults.standard.set(nickname, forKey: "nickname")
@@ -70,6 +86,11 @@ final class LauncherModel: ObservableObject {
 
     func launch() {
         guard canLaunch else { return }
+        if let running = gameProcess, running.isRunning {
+            status = "Игра уже запущена"
+            return
+        }
+        gameProcess = nil
         savePrefs()
         isBusy = true
         errorText = nil
@@ -79,17 +100,22 @@ final class LauncherModel: ObservableObject {
             defer { isBusy = false }
             do {
                 try paths.prepare()
+                Self.log("prepare OK")
 
                 // 1. Java
                 let java = try Java.ensure(paths: paths) { msg, frac in
                     Task { @MainActor in self.status = msg; self.progress = frac * 0.3 }
                 }
 
+                Self.log("java = \(java.path)")
+
                 // 2. Ванильный клиент
                 status = "Проверяю Minecraft 1.21.1"
                 _ = try Vanilla.install(version: "1.21.1", paths: paths) { msg, frac in
                     Task { @MainActor in self.status = msg; self.progress = 0.3 + frac * 0.2 }
                 }
+
+                Self.log("vanilla OK")
 
                 // 3. NeoForge
                 let neoId = try NeoForge.install(
@@ -100,6 +126,8 @@ final class LauncherModel: ObservableObject {
                 ) { msg, frac in
                     Task { @MainActor in self.status = msg; self.progress = 0.5 + frac * 0.15 }
                 }
+
+                Self.log("neoforge OK: \(neoId)")
 
                 // 4. Модпак из git
                 status = "Проверяю модпак"
@@ -112,6 +140,8 @@ final class LauncherModel: ObservableObject {
 
                 status = downloaded > 0 ? "Скачано файлов: \(downloaded)" : "Модпак актуален"
 
+                Self.log("pack OK: \(manifest.version)")
+
                 // 5. Запуск
                 let opts = Launch.Options(nickname: nickname, memoryMB: memoryMB,
                                           serverAddress: "localhost:25565")
@@ -119,7 +149,10 @@ final class LauncherModel: ObservableObject {
                     Task { @MainActor in self.status = msg; self.progress = frac }
                 }
                 gameProcess = proc
+                isBusy = false
                 status = "Игра запущена"
+
+                Self.log("launched pid=\(proc.processIdentifier)")
 
                 proc.terminationHandler = { p in
                     Task { @MainActor in
@@ -130,6 +163,7 @@ final class LauncherModel: ObservableObject {
 
                 startLogTail()
             } catch {
+                Self.log("FAILED: \(error.localizedDescription)")
                 errorText = error.localizedDescription
                 status = "Ошибка"
             }

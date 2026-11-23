@@ -15,15 +15,13 @@ swiftc -sdk "$SDK" -target arm64-apple-macos13.0 -O \
 cp Info.plist "$OUT/Contents/"
 /usr/libexec/PlistBuddy -c "Set :CFBundleShortVersionString $VERSION" "$OUT/Contents/Info.plist"
 
-# иконка
-if [ -f icon.png ]; then
-  mkdir -p AppIcon.iconset
-  for s in 16 32 64 128 256 512; do
-    cp icon.png "AppIcon.iconset/icon_${s}x${s}.png"
-  done
-  iconutil -c icns AppIcon.iconset -o "$OUT/Contents/Resources/AppIcon.icns" 2>/dev/null || true
-  /usr/libexec/PlistBuddy -c "Add :CFBundleIconFile string AppIcon" "$OUT/Contents/Info.plist" 2>/dev/null || true
-fi
+# Настоящий iconset: каждый PNG рисуется в своём размере, включая Retina.
+swiftc -sdk "$SDK" -target arm64-apple-macos13.0 -O \
+    -o build/MakeIcon tools/MakeIcon.swift
+mkdir -p build/icon-source
+build/MakeIcon build/icon-source
+iconutil -c icns build/icon-source/AppIcon.iconset \
+    -o "$OUT/Contents/Resources/AppIcon.icns"
 
 codesign --force --deep --sign - "$OUT"
 echo "Готово: $OUT"

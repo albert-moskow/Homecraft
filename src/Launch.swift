@@ -160,7 +160,6 @@ enum Launch {
             // Установщик NeoForge не кладёт манифест ванильной версии — берём у Mojang.
             let dir = paths.game.appendingPathComponent("versions/\(id)", isDirectory: true)
             try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-            let meta = try Vanilla.versionMeta(id)
             let data = try Net.data(metaURL(for: id))
             try data.write(to: f)
             guard let o = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {

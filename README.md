@@ -18,6 +18,21 @@
 open build/HomeCraft.app
 ```
 
+## Подключение
+
+По умолчанию используется `vivo-figurine.tun.ply.gg:25565`. Адрес можно изменить
+в поле «Сервер»; пустое поле запускает игру без автоподключения. Старый ошибочный
+адрес `vivo-figurine.tun.playit.gg:25565` автоматически заменяется на рабочий.
+Minecraft 1.21.1 подключается через `--quickPlayMultiplayer`. Для нового профиля
+создаётся `options.txt` с `onboardAccessibility:false`; существующие настройки
+доступности и графики не перезаписываются.
+
+Сервер не должен требовать AutoModpack у ПК-клиента: в
+`automodpack-server.json` установите `requireAutoModpackOnClient:false` и
+`nagUnModdedClients:false`, затем выполните `/automodpack config reload`.
+Раздача Android-сборки через AutoModpack при этом остаётся включённой.
+
+
 ## Как обновить моды
 
 1. Положить новый jar в `mods/`

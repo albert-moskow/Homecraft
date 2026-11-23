@@ -281,6 +281,8 @@ enum Launch {
             "auth_player_name": opts.nickname,
             "auth_uuid": offlineUUID(opts.nickname),
             "auth_access_token": "0",
+            "clientid": "",
+            "auth_xuid": "",
             "user_type": "legacy",
             "version_type": "release",
             "game_directory": paths.game.path,
@@ -308,18 +310,32 @@ enum Launch {
             "-Dminecraft.launcher.version=1.1"
         ]
         args.append(contentsOf: opts.extraJvmArgs)
-        // -cp должен идти ДО -p: иначе client.jar попадает в module path
-        // и создаёт конфликт пакетов net.minecraft.obfuscate.
+        // Java принимает -cp и -p независимо от порядка; пути задаёт манифест.
         args.append("-cp")
         args.append(classpath.joined(separator: sep))
         args.append(contentsOf: m.jvmArgs.map(subst))
         args.append(m.mainClass)
-        args.append(contentsOf: m.gameArgs.map(subst))
+        // Пустые offline-поля сохраняем вместе с флагами (--clientId, --xuid).
+        // Неизвестная переменная — ошибка, а не повод удалить только её значение.
+        let gameArgs = m.gameArgs.map(subst)
+        if let unresolved = gameArgs.first(where: { $0.contains("${") }) {
+            throw LErr.launch("неизвестная переменная в аргументе: \(unresolved)")
+        }
+        args.append(contentsOf: gameArgs)
 
-        if let server = opts.serverAddress, !server.isEmpty {
-            args.append(contentsOf: ["--server", server])
+        // В 1.21.1 параметр --server удалён: автоподключение идёт через quickPlay.
+        if let server = opts.serverAddress?.trimmingCharacters(in: .whitespaces), !server.isEmpty {
+            args.append(contentsOf: ["--quickPlayMultiplayer", server])
         }
         if opts.fullscreen { args.append("--fullscreen") }
+
+        // Новый профиль проекта сразу запускает QuickPlay. Существующие
+        // настройки доступности и графики игрока не перезаписываем.
+        let optionsFile = paths.game.appendingPathComponent("options.txt")
+        if !FileManager.default.fileExists(atPath: optionsFile.path) {
+            try "onboardAccessibility:false\n".write(
+                to: optionsFile, atomically: true, encoding: .utf8)
+        }
 
         let p = Process()
         p.executableURL = java

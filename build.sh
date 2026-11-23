@@ -4,7 +4,7 @@ set -e
 cd "$(dirname "$0")"
 
 SDK="${SDK:-/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk}"
-VERSION="${VERSION:-1.0.0}"
+VERSION="${VERSION:-$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Info.plist)}"
 OUT="build/HomeCraft.app"
 
 rm -rf build && mkdir -p "$OUT/Contents/MacOS" "$OUT/Contents/Resources"

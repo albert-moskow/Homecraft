@@ -39,7 +39,12 @@ final class LauncherModel: ObservableObject {
 
     init() {
         nickname = UserDefaults.standard.string(forKey: "nickname") ?? ""
-        serverAddress = UserDefaults.standard.string(forKey: "serverAddress") ?? "vivo-figurine.tun.playit.gg:25565"
+        let savedServer = UserDefaults.standard.string(forKey: "serverAddress")
+        if savedServer == nil || savedServer == "vivo-figurine.tun.playit.gg:25565" {
+            serverAddress = "vivo-figurine.tun.ply.gg:25565"
+        } else {
+            serverAddress = savedServer!
+        }
         let saved = UserDefaults.standard.integer(forKey: "memoryMB")
         if saved > 0 { memoryMB = saved }
     }

@@ -7,6 +7,10 @@ final class LauncherModel: ObservableObject {
     @Published var nickname: String = ""
     /// Адрес сервера; пусто — открыть меню «Сетевая игра».
     @Published var serverAddress: String = ""
+    @Published var automaticServer: Bool = true
+    @Published var checkingServers = false
+    @Published var routeSummary = "Проверка двух маршрутов перед запуском"
+    private var selectedRoute: String?
     @Published var memoryMB: Int = 4096
     @Published var status: String = "Готов к запуску"
     @Published var progress: Double = 0
@@ -45,17 +49,19 @@ final class LauncherModel: ObservableObject {
         } else {
             serverAddress = savedServer!
         }
+        automaticServer = UserDefaults.standard.object(forKey: "automaticServer") as? Bool ?? true
         let saved = UserDefaults.standard.integer(forKey: "memoryMB")
         if saved > 0 { memoryMB = saved }
     }
 
     var canLaunch: Bool {
-        !nickname.trimmingCharacters(in: .whitespaces).isEmpty && !isBusy && gameProcess == nil
+        !nickname.trimmingCharacters(in: .whitespaces).isEmpty && !isBusy && !checkingServers && gameProcess == nil
     }
 
     func savePrefs() {
         UserDefaults.standard.set(nickname, forKey: "nickname")
         UserDefaults.standard.set(serverAddress, forKey: "serverAddress")
+        UserDefaults.standard.set(automaticServer, forKey: "automaticServer")
         UserDefaults.standard.set(memoryMB, forKey: "memoryMB")
     }
 
@@ -91,6 +97,30 @@ final class LauncherModel: ObservableObject {
                 errorText = error.localizedDescription
             }
         }
+    }
+
+    /// Проверки идут одновременно и не блокируют главный поток SwiftUI.
+    func refreshServerRoutes() async {
+        guard !checkingServers else { return }
+        checkingServers = true
+        defer { checkingServers = false }
+        selectedRoute = nil
+        routeSummary = "Проверяю РФ и международный маршрут…"
+        let results = await ServerRoute.measure()
+        let details = results.map { result in
+            if let ms = result.milliseconds {
+                return "\(result.endpoint.label): \(Int(ms.rounded())) мс"
+            }
+            return "\(result.endpoint.label): недоступен"
+        }.joined(separator: " · ")
+        if let best = ServerRoute.fastest(results) {
+            selectedRoute = best.endpoint.address
+            if automaticServer { serverAddress = best.endpoint.address }
+            routeSummary = "\(details)\nВыбран: \(best.endpoint.label)"
+        } else {
+            routeSummary = "Оба адреса недоступны. Проверьте сеть или задайте адрес вручную."
+        }
+        Self.log("routes: \(results.map { "\($0.endpoint.address)=\($0.milliseconds.map(String.init(describing:)) ?? $0.failure ?? "недоступен")" }.joined(separator: ", "))")
     }
 
     func launch() {
@@ -150,6 +180,16 @@ final class LauncherModel: ObservableObject {
                 status = downloaded > 0 ? "Скачано файлов: \(downloaded)" : "Модпак актуален"
 
                 Self.log("pack OK: \(manifest.version)")
+
+                // Проверяем маршрут после загрузок, непосредственно перед запуском игры.
+                if automaticServer {
+                    status = "Выбираю маршрут к HomeCraft"
+                    await refreshServerRoutes()
+                    guard let selectedRoute else {
+                        throw LErr.launch("оба адреса HomeCraft недоступны; попробуйте позже или выберите адрес вручную")
+                    }
+                    serverAddress = selectedRoute
+                }
 
                 // 5. Запуск
                 let opts = Launch.Options(nickname: nickname, memoryMB: memoryMB,

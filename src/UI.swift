@@ -52,6 +52,10 @@ struct ContentView: View {
                 Text("Сервер")
                     .font(.system(size: 11, weight: .semibold))
                     .foregroundStyle(.white.opacity(0.5))
+                Toggle("Выбирать автоматически", isOn: $model.automaticServer)
+                    .font(.system(size: 12))
+                    .disabled(model.isBusy)
+                    .onChange(of: model.automaticServer) { _ in model.savePrefs() }
                 TextField("адрес:порт", text: $model.serverAddress)
                     .textFieldStyle(.plain)
                     .font(.system(size: 12, design: .monospaced))
@@ -60,6 +64,16 @@ struct ContentView: View {
                     .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.1)))
                     .foregroundStyle(.white)
                     .onSubmit { model.savePrefs() }
+                    .disabled(model.automaticServer || model.isBusy)
+                Text(model.routeSummary)
+                    .font(.system(size: 10))
+                    .foregroundStyle(.white.opacity(0.6))
+                    .fixedSize(horizontal: false, vertical: true)
+                Button(model.checkingServers ? "Проверяю…" : "Проверить маршруты") {
+                    Task { await model.refreshServerRoutes() }
+                }
+                .font(.system(size: 11))
+                .disabled(model.checkingServers || model.isBusy)
             }
 
             VStack(alignment: .leading, spacing: 8) {

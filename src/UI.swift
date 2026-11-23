@@ -48,6 +48,20 @@ struct ContentView: View {
                     .onSubmit { model.savePrefs() }
             }
 
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Сервер")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundStyle(.white.opacity(0.5))
+                TextField("адрес:порт", text: $model.serverAddress)
+                    .textFieldStyle(.plain)
+                    .font(.system(size: 12, design: .monospaced))
+                    .padding(9)
+                    .background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.07)))
+                    .overlay(RoundedRectangle(cornerRadius: 8).stroke(.white.opacity(0.1)))
+                    .foregroundStyle(.white)
+                    .onSubmit { model.savePrefs() }
+            }
+
             VStack(alignment: .leading, spacing: 8) {
                 HStack {
                     Text("Память")

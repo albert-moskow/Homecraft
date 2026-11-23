@@ -5,6 +5,8 @@ import AppKit
 @MainActor
 final class LauncherModel: ObservableObject {
     @Published var nickname: String = ""
+    /// Адрес сервера; пусто — открыть меню «Сетевая игра».
+    @Published var serverAddress: String = ""
     @Published var memoryMB: Int = 4096
     @Published var status: String = "Готов к запуску"
     @Published var progress: Double = 0
@@ -37,6 +39,7 @@ final class LauncherModel: ObservableObject {
 
     init() {
         nickname = UserDefaults.standard.string(forKey: "nickname") ?? ""
+        serverAddress = UserDefaults.standard.string(forKey: "serverAddress") ?? "vivo-figurine.tun.playit.gg:25565"
         let saved = UserDefaults.standard.integer(forKey: "memoryMB")
         if saved > 0 { memoryMB = saved }
     }
@@ -47,6 +50,7 @@ final class LauncherModel: ObservableObject {
 
     func savePrefs() {
         UserDefaults.standard.set(nickname, forKey: "nickname")
+        UserDefaults.standard.set(serverAddress, forKey: "serverAddress")
         UserDefaults.standard.set(memoryMB, forKey: "memoryMB")
     }
 
@@ -144,7 +148,7 @@ final class LauncherModel: ObservableObject {
 
                 // 5. Запуск
                 let opts = Launch.Options(nickname: nickname, memoryMB: memoryMB,
-                                          serverAddress: "localhost:25565")
+                                          serverAddress: serverAddress)
                 let proc = try Launch.run(versionId: neoId, paths: paths, java: java, opts: opts) { msg, frac in
                     Task { @MainActor in self.status = msg; self.progress = frac }
                 }

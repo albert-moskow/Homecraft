@@ -1,5 +1,5 @@
 {
- "version": "1.0.0",
+ "version": "1.0.1",
  "name": "HomeCraft",
  "minecraftVersion": "1.21.1",
  "neoForgeVersion": "21.1.267",
@@ -110,6 +110,13 @@
    "side": "both"
   },
   {
+   "path": "mods/jei-1.21.1-neoforge-19.64.0.455.jar",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/jei-1.21.1-neoforge-19.64.0.455.jar",
+   "sha1": "f6d6fc08d54c40752926b570a2220471e8c45c1a",
+   "size": 2375741,
+   "side": "both"
+  },
+  {
    "path": "mods/justsit-1.0.0-neoforge-1.21.1.jar",
    "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/justsit-1.0.0-neoforge-1.21.1.jar",
    "sha1": "4b88b6e7cbd611f7f675bdfb1d5d4e1f0ffa14fa",
@@ -142,6 +149,13 @@
    "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/letsdo-vinery-neoforge-1.5.6.jar",
    "sha1": "2e2866ba9abdfff57509b291b76567054e1d5065",
    "size": 2570708,
+   "side": "both"
+  },
+  {
+   "path": "mods/mezz_config-1.21.1-neoforge-0.7.1-standalone.jar",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/mezz_config-1.21.1-neoforge-0.7.1-standalone.jar",
+   "sha1": "2382e29c9a0f44d4f4b9baa4cb3f6a356e048e60",
+   "size": 347249,
    "side": "both"
   },
   {

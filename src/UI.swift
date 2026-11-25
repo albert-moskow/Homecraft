@@ -242,6 +242,38 @@ private struct CustomModsView: View {
                 .foregroundStyle(.secondary)
                 .fixedSize(horizontal: false, vertical: true)
 
+            if !model.personalPacks.isEmpty {
+                VStack(alignment: .leading, spacing: 6) {
+                    Text("Готовые наборы")
+                        .font(.system(size: 12, weight: .semibold))
+                    ForEach(model.personalPacks) { pack in
+                        HStack(alignment: .top, spacing: 10) {
+                            VStack(alignment: .leading, spacing: 2) {
+                                Text(pack.name)
+                                    .font(.system(size: 12, weight: .medium))
+                                Text(pack.description)
+                                    .font(.system(size: 10))
+                                    .foregroundStyle(.secondary)
+                                    .fixedSize(horizontal: false, vertical: true)
+                            }
+                            Spacer(minLength: 8)
+                            if model.installingPacks.contains(pack.id) {
+                                ProgressView()
+                                    .controlSize(.small)
+                            } else if model.installedPacks.contains(pack.id) {
+                                Text("Установлено")
+                                    .font(.system(size: 11))
+                                    .foregroundStyle(.green)
+                            } else {
+                                Button("Установить") { model.installPersonalPack(pack) }
+                            }
+                        }
+                        .padding(8)
+                        .background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.04)))
+                    }
+                }
+            }
+
             if model.customMods.isEmpty {
                 Text("Пока пусто. Нажмите «Добавить .jar…» или положите файлы в папку mods-custom.")
                     .font(.system(size: 12))
@@ -280,7 +312,10 @@ private struct CustomModsView: View {
         .padding(24)
         .frame(width: 540)
         .preferredColorScheme(.dark)
-        .onAppear { model.refreshCustomMods() }
+        .onAppear {
+            model.refreshCustomMods()
+            model.loadPersonalPacks()
+        }
     }
 
     private func row(_ mod: CustomMods.Item) -> some View {

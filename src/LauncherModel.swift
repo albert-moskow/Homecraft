@@ -25,6 +25,10 @@ final class LauncherModel: ObservableObject {
     /// Личные моды игрока (game/mods-custom) — в общую сборку не попадают.
     @Published var customMods: [CustomMods.Item] = []
     @Published var customModsMessage: String?
+    /// Готовые наборы личных модов из репозитория лаунчера.
+    @Published var personalPacks: [PersonalMods.Pack] = []
+    @Published var installingPacks: Set<String> = []
+    @Published var installedPacks: Set<String> = []
 
     private let paths = Paths.standard()
 
@@ -104,6 +108,64 @@ final class LauncherModel: ObservableObject {
         let dir = CustomMods.folder(for: paths)
         try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
         NSWorkspace.shared.open(dir)
+    }
+
+    func loadPersonalPacks() {
+        Task.detached {
+            guard let manifest = try? PersonalMods.load() else { return }
+            await MainActor.run {
+                self.personalPacks = manifest.packs
+                self.refreshInstalledPacks()
+            }
+        }
+    }
+
+    /// Проверка файлов набора считается в фоне: там хеширование на несколько мегабайт.
+    func refreshInstalledPacks() {
+        let packs = personalPacks
+        guard !packs.isEmpty else {
+            installedPacks = []
+            return
+        }
+        let paths = self.paths
+        DispatchQueue.global(qos: .utility).async {
+            var done: Set<String> = []
+            for pack in packs where PersonalMods.isInstalled(pack, paths: paths) {
+                done.insert(pack.id)
+            }
+            DispatchQueue.main.async { self.installedPacks = done }
+        }
+    }
+
+    func installPersonalPack(_ pack: PersonalMods.Pack) {
+        guard !installingPacks.contains(pack.id) else { return }
+        installingPacks.insert(pack.id)
+        customModsMessage = "Скачиваю «\(pack.name)»…"
+        let paths = self.paths
+
+        // Скачивание блокирующее, поэтому уводим его с главного потока.
+        DispatchQueue.global(qos: .userInitiated).async {
+            do {
+                let count = try PersonalMods.install(pack, paths: paths) { name, fraction in
+                    DispatchQueue.main.async {
+                        self.customModsMessage = "Скачиваю \(name) (\(Int(fraction * 100))%)"
+                    }
+                }
+                DispatchQueue.main.async {
+                    self.installingPacks.remove(pack.id)
+                    self.customModsMessage = count > 0
+                        ? "«\(pack.name)» установлен. Моды включатся при следующем запуске игры."
+                        : "«\(pack.name)» уже установлен."
+                    self.refreshCustomMods()
+                    self.refreshInstalledPacks()
+                }
+            } catch {
+                DispatchQueue.main.async {
+                    self.installingPacks.remove(pack.id)
+                    self.customModsMessage = "Не удалось установить: \(error.localizedDescription)"
+                }
+            }
+        }
     }
 
     func refreshMicrophoneStatus() {

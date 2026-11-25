@@ -1,0 +1,30 @@
+{
+  "version": "1.0.0",
+  "packs": [
+    {
+      "id": "schematics",
+      "name": "Схемы: голограмма постройки и принтер",
+      "description": "Forgematica (порт Litematica) и BuildPrint: показывает голограмму здания из .litematic/.schem, считает материалы и умеет ставить блоки за вас. Только на этот компьютер.",
+      "files": [
+        {
+          "name": "mafglib-0.4.3.jar",
+          "url": "https://cdn.modrinth.com/data/SKI34J7B/versions/CgDQ0u0Q/mafglib-0.4.3%2Bmc1.21.1.jar",
+          "sha1": "9f62df832b1d5c9fe1aead873bd65cb8defacac7",
+          "size": 1314767
+        },
+        {
+          "name": "forgematica-0.4.3.jar",
+          "url": "https://cdn.modrinth.com/data/dCKRaeBC/versions/PFUOWUDF/forgematica-0.4.3%2Bmc1.21.1.jar",
+          "sha1": "d27eec1a3b72520ec096a2c0e35adce65031d36e",
+          "size": 1646167
+        },
+        {
+          "name": "buildprint-0.1.46.jar",
+          "url": "https://cdn.modrinth.com/data/pa8th8fX/versions/izpaN8Jm/buildprint-neoforge-0.1.46%2B1.21.1.jar",
+          "sha1": "c3aecb51070cd38803d483a24bfd162f5ac4134e",
+          "size": 4977511
+        }
+      ]
+    }
+  ]
+}

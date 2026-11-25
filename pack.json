@@ -1,5 +1,5 @@
 {
- "version": "1.0.1",
+ "version": "1.0.2",
  "name": "HomeCraft",
  "minecraftVersion": "1.21.1",
  "neoForgeVersion": "21.1.267",
@@ -16,6 +16,13 @@
    "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/CreativeCore_NEOFORGE_v2.13.54_mc1.21.1.jar",
    "sha1": "07db1f441349db503fc21a146606121747780b7b",
    "size": 1237192,
+   "side": "both"
+  },
+  {
+   "path": "mods/CustomPlayerModels-1.21-0.6.27a.jar",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/CustomPlayerModels-1.21-0.6.27a.jar",
+   "sha1": "34d57efcc56c043f89c61f169944d7b95c11f504",
+   "size": 2793136,
    "side": "both"
   },
   {

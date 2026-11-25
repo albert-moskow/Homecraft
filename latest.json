@@ -1,6 +1,6 @@
 {
-  "version": "1.6.6",
-  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.6/HomeCraft-macOS.zip",
-  "sha256": "c7a6eb18eceffd1787677cec91a771455d499fb0e046b064b9f73dcfe2c0bae0",
-  "notes": "Автовключение ресурспаков Vanilla+, Fresh Animations и Default Dark Mode"
+  "version": "1.6.7",
+  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.7/HomeCraft-macOS.zip",
+  "sha256": "921afb086110b78e5ffc46203fa18be6fcf694e45352fc00e2187329c9a4d1b3",
+  "notes": "Свои моды: папка mods-custom, которую не затрагивает общая сборка"
 }

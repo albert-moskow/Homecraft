@@ -59,7 +59,7 @@ jobs:
             "version": "${{ steps.ver.outputs.version }}",
             "url": "https://github.com/albert-moskow/Homecraft/releases/download/v${{ steps.ver.outputs.version }}/HomeCraft-macOS.zip",
             "sha256": "${{ env.sha }}",
-            "notes": "Автодобавление серверов HomeCraft в список Сетевой игры (servers.dat)"
+            "notes": "Автовключение ресурспаков Vanilla+, Fresh Animations и Default Dark Mode"
           }
           JSON
           git config user.name "github-actions"

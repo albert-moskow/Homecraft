@@ -331,10 +331,7 @@ enum Launch {
         // Новый профиль проекта сразу запускает QuickPlay. Существующие
         // настройки доступности и графики игрока не перезаписываем.
         let optionsFile = paths.game.appendingPathComponent("options.txt")
-        if !FileManager.default.fileExists(atPath: optionsFile.path) {
-            try "onboardAccessibility:false\n".write(
-                to: optionsFile, atomically: true, encoding: .utf8)
-        }
+        ensureOptionsTxt(at: optionsFile, gameDir: paths.game)
 
         // Автодобавление серверов HomeCraft в servers.dat (список «Сетевая игра»).
         ServersDat.ensure(in: paths.game, preferredAddress: opts.serverAddress)
@@ -392,6 +389,59 @@ enum Launch {
     static func timestamp() -> String {
         let f = DateFormatter(); f.dateFormat = "yyyyMMdd-HHmmss"
         return f.string(from: Date())
+    }
+
+    private static let defaultResourcePacks = [
+        "file/Reimagined-v1.63.7.zip",
+        "file/Fast-Better-Grass.zip",
+        "file/Better-Leaves-9.6.zip",
+        "file/FreshAnimations-v1.11.2.zip",
+        "file/Default-Dark-Mode-2025.5.0.zip",
+        "file/Default-Dark-Mode-Expansion-2026.9.1.zip"
+    ]
+
+    /// Включает ресурспаки сборки в `options.txt` один раз (не перезатирая остальные настройки игрока).
+    private static func ensureOptionsTxt(at optionsFile: URL, gameDir: URL) {
+        let markerFile = gameDir.appendingPathComponent(".homecraft-rp-v1")
+        let defaultLine = "resourcePacks:[\"vanilla\",\"mod_resources\"," +
+            defaultResourcePacks.map { "\"\($0)\"" }.joined(separator: ",") + "]"
+
+        guard FileManager.default.fileExists(atPath: optionsFile.path),
+              let text = try? String(contentsOf: optionsFile, encoding: .utf8) else {
+            let initial = "onboardAccessibility:false\n\(defaultLine)\n"
+            try? initial.write(to: optionsFile, atomically: true, encoding: .utf8)
+            try? "1".write(to: markerFile, atomically: true, encoding: .utf8)
+            return
+        }
+
+        if FileManager.default.fileExists(atPath: markerFile.path) {
+            return
+        }
+
+        var lines = text.components(separatedBy: .newlines)
+        var updated = false
+        for i in lines.indices {
+            if lines[i].hasPrefix("resourcePacks:[") {
+                let raw = String(lines[i].dropFirst("resourcePacks:".count))
+                if let data = raw.data(using: .utf8),
+                   var arr = (try? JSONSerialization.jsonObject(with: data)) as? [String] {
+                    for pack in defaultResourcePacks where !arr.contains(pack) {
+                        arr.append(pack)
+                    }
+                    if let outData = try? JSONSerialization.data(withJSONObject: arr),
+                       let outStr = String(data: outData, encoding: .utf8) {
+                        lines[i] = "resourcePacks:\(outStr)"
+                        updated = true
+                    }
+                }
+                break
+            }
+        }
+        if !updated {
+            lines.append(defaultLine)
+        }
+        try? lines.joined(separator: "\n").write(to: optionsFile, atomically: true, encoding: .utf8)
+        try? "1".write(to: markerFile, atomically: true, encoding: .utf8)
     }
 }
 

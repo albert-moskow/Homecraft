@@ -1,5 +1,5 @@
 {
- "version": "1.0.3",
+ "version": "1.0.4",
  "name": "HomeCraft",
  "minecraftVersion": "1.21.1",
  "neoForgeVersion": "21.1.267",
@@ -80,6 +80,20 @@
    "sha1": "1228c7597c4b6cbaec10a090f9b5b471ca9042d4",
    "size": 861829,
    "side": "both"
+  },
+  {
+   "path": "mods/entity_model_features-3.3.12-1.21-neoforge.jar",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/entity_model_features-3.3.12-1.21-neoforge.jar",
+   "sha1": "e9a163b77243cdfcb0ad3d698dc48a60cb8710e9",
+   "size": 656382,
+   "side": "client"
+  },
+  {
+   "path": "mods/entity_texture_features-7.2.7-1.21-neoforge.jar",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/mods/entity_texture_features-7.2.7-1.21-neoforge.jar",
+   "sha1": "5fd97ee3a0a3bb8c223f26f196bdb5c9e9841923",
+   "size": 811876,
+   "side": "client"
   },
   {
    "path": "mods/ftb-library-neoforge-2101.1.40.jar",
@@ -171,6 +185,48 @@
    "sha1": "8aded3a22614a8e1641973623e7817dccea513fa",
    "size": 4936802,
    "side": "both"
+  },
+  {
+   "path": "resourcepacks/Better-Leaves-9.6.zip",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/resourcepacks/Better-Leaves-9.6.zip",
+   "sha1": "fa3a961b82a9f15a4e80b1f7f021bc121649f073",
+   "size": 1977146,
+   "side": "client"
+  },
+  {
+   "path": "resourcepacks/Default-Dark-Mode-2025.5.0.zip",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/resourcepacks/Default-Dark-Mode-2025.5.0.zip",
+   "sha1": "176424b313f5cc70cdcf37f4cf55af3bab95dc50",
+   "size": 748843,
+   "side": "client"
+  },
+  {
+   "path": "resourcepacks/Default-Dark-Mode-Expansion-2026.9.1.zip",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/resourcepacks/Default-Dark-Mode-Expansion-2026.9.1.zip",
+   "sha1": "8d2e186dfee71dd08dbc5699ef9a4ffe1d893394",
+   "size": 1903527,
+   "side": "client"
+  },
+  {
+   "path": "resourcepacks/Fast-Better-Grass.zip",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/resourcepacks/Fast-Better-Grass.zip",
+   "sha1": "3a344f8e36a2e748f11dce1c246b5c6ce91141f1",
+   "size": 10928,
+   "side": "client"
+  },
+  {
+   "path": "resourcepacks/FreshAnimations-v1.11.2.zip",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/resourcepacks/FreshAnimations-v1.11.2.zip",
+   "sha1": "c0f564f3b9c12762923015eefad53edbdbbd3d96",
+   "size": 742790,
+   "side": "client"
+  },
+  {
+   "path": "resourcepacks/Reimagined-v1.63.7.zip",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/resourcepacks/Reimagined-v1.63.7.zip",
+   "sha1": "deafb64833017314e5563670924cd0de1fa6dad7",
+   "size": 36255954,
+   "side": "client"
   },
   {
    "path": "servers.dat",

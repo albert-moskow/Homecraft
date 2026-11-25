@@ -1,9 +1,12 @@
 import SwiftUI
+import AppKit
+import UniformTypeIdentifiers
 
 struct ContentView: View {
     @EnvironmentObject var model: LauncherModel
     @State private var showLog = false
     @State private var showSettings = false
+    @State private var showCustomMods = false
 
     var body: some View {
         ZStack {
@@ -71,6 +74,12 @@ struct ContentView: View {
                             .disabled(model.isBusy)
                     }
                     Spacer()
+                    Button { showCustomMods = true } label: {
+                        Label(model.customMods.isEmpty
+                              ? "Свои моды"
+                              : "Свои моды (\(model.customMods.filter(\.enabled).count))",
+                              systemImage: "shippingbox")
+                    }
                     Button { showSettings = true } label: {
                         Label("Настройки", systemImage: "gearshape")
                     }
@@ -103,6 +112,10 @@ struct ContentView: View {
         .preferredColorScheme(.dark)
         .sheet(isPresented: $showSettings, onDismiss: { model.savePrefs() }) {
             LauncherSettingsView()
+                .environmentObject(model)
+        }
+        .sheet(isPresented: $showCustomMods) {
+            CustomModsView()
                 .environmentObject(model)
         }
     }
@@ -211,5 +224,110 @@ private struct LauncherSettingsView: View {
         .padding(28)
         .frame(width: 440)
         .preferredColorScheme(.dark)
+    }
+}
+
+/// Личные моды игрока: лежат только у него и не входят в общую сборку.
+private struct CustomModsView: View {
+    @EnvironmentObject var model: LauncherModel
+    @Environment(\.dismiss) private var dismiss
+
+    var body: some View {
+        VStack(alignment: .leading, spacing: 14) {
+            Text("Свои моды")
+                .font(.system(size: 22, weight: .bold, design: .rounded))
+
+            Text("Эти моды хранятся только у вас, в папке mods-custom: они не входят в общую сборку, не скачиваются другим игрокам и не попадают на сервер. Включённые моды подключаются при запуске игры.")
+                .font(.system(size: 11))
+                .foregroundStyle(.secondary)
+                .fixedSize(horizontal: false, vertical: true)
+
+            if model.customMods.isEmpty {
+                Text("Пока пусто. Нажмите «Добавить .jar…» или положите файлы в папку mods-custom.")
+                    .font(.system(size: 12))
+                    .foregroundStyle(.secondary)
+                    .frame(maxWidth: .infinity, alignment: .leading)
+                    .padding(.vertical, 12)
+            } else {
+                ScrollView {
+                    VStack(spacing: 6) {
+                        ForEach(model.customMods) { mod in
+                            row(mod)
+                        }
+                    }
+                    .padding(.vertical, 2)
+                }
+                .frame(maxHeight: 300)
+            }
+
+            if let message = model.customModsMessage {
+                Text(message)
+                    .font(.system(size: 11))
+                    .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            HStack(spacing: 10) {
+                Button("Добавить .jar…") { chooseFiles() }
+                Button("Открыть папку") { model.openCustomModsFolder() }
+                Spacer()
+                Button("Готово") { dismiss() }
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
+                    .tint(.purple)
+            }
+        }
+        .padding(24)
+        .frame(width: 540)
+        .preferredColorScheme(.dark)
+        .onAppear { model.refreshCustomMods() }
+    }
+
+    private func row(_ mod: CustomMods.Item) -> some View {
+        HStack(spacing: 10) {
+            Toggle("", isOn: Binding(
+                get: { mod.enabled },
+                set: { model.setCustomMod(mod.name, enabled: $0) }
+            ))
+            .labelsHidden()
+            .toggleStyle(.switch)
+            .controlSize(.mini)
+
+            VStack(alignment: .leading, spacing: 2) {
+                Text(mod.meta.title)
+                    .font(.system(size: 12, weight: .semibold))
+                    .lineLimit(1)
+                Text(mod.subtitle)
+                    .font(.system(size: 10))
+                    .foregroundStyle(mod.meta.incompatible ? Color.orange : Color.secondary)
+                    .lineLimit(2)
+                    .fixedSize(horizontal: false, vertical: true)
+            }
+
+            Spacer(minLength: 8)
+
+            Button {
+                model.deleteCustomMod(mod.name)
+            } label: {
+                Image(systemName: "trash")
+            }
+            .buttonStyle(.borderless)
+            .help("Удалить мод из папки mods-custom")
+        }
+        .padding(8)
+        .background(RoundedRectangle(cornerRadius: 8).fill(.white.opacity(0.05)))
+    }
+
+    private func chooseFiles() {
+        let panel = NSOpenPanel()
+        panel.allowsMultipleSelection = true
+        panel.canChooseDirectories = false
+        panel.canChooseFiles = true
+        panel.title = "Добавить свои моды"
+        panel.message = "Выберите .jar для NeoForge 1.21.1. Моды останутся только у вас."
+        panel.allowedContentTypes = [UTType(filenameExtension: "jar")].compactMap { $0 }
+        if panel.runModal() == .OK {
+            model.addCustomMods(panel.urls)
+        }
     }
 }

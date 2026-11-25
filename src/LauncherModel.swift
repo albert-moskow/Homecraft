@@ -22,6 +22,9 @@ final class LauncherModel: ObservableObject {
     @Published var packVersion: String = "—"
     @Published var microphoneAuthorized: Bool = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
     @Published var microphoneStatusText: String = ""
+    /// Личные моды игрока (game/mods-custom) — в общую сборку не попадают.
+    @Published var customMods: [CustomMods.Item] = []
+    @Published var customModsMessage: String?
 
     private let paths = Paths.standard()
 
@@ -57,7 +60,50 @@ final class LauncherModel: ObservableObject {
         if saved > 0 { memoryMB = saved }
         try? paths.prepare()
         ServersDat.ensure(in: paths.game, preferredAddress: serverAddress)
+        customMods = CustomMods.items(paths)
         refreshMicrophoneStatus()
+    }
+
+    // MARK: - Свои моды
+
+    func refreshCustomMods() {
+        customMods = CustomMods.items(paths)
+    }
+
+    func addCustomMods(_ urls: [URL]) {
+        do {
+            let added = try CustomMods.install(urls, paths: paths)
+            if added.isEmpty {
+                customModsMessage = "Выберите хотя бы один файл .jar"
+            } else {
+                CustomMods.apply(paths: paths) { Self.log($0) }
+                customModsMessage = "Добавлено: \(added.count). Моды включены и применятся при следующем запуске."
+            }
+        } catch {
+            customModsMessage = "Не удалось добавить: \(error.localizedDescription)"
+        }
+        refreshCustomMods()
+    }
+
+    func setCustomMod(_ name: String, enabled: Bool) {
+        CustomMods.setEnabled(name, enabled, paths: paths)
+        CustomMods.apply(paths: paths) { Self.log($0) }
+        customModsMessage = enabled
+            ? "\(name) включён — применится при следующем запуске"
+            : "\(name) отключён"
+        refreshCustomMods()
+    }
+
+    func deleteCustomMod(_ name: String) {
+        CustomMods.remove(name, paths: paths)
+        customModsMessage = "\(name) удалён"
+        refreshCustomMods()
+    }
+
+    func openCustomModsFolder() {
+        let dir = CustomMods.folder(for: paths)
+        try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        NSWorkspace.shared.open(dir)
     }
 
     func refreshMicrophoneStatus() {

@@ -336,6 +336,9 @@ enum Launch {
         // Автодобавление серверов HomeCraft в servers.dat (список «Сетевая игра»).
         ServersDat.ensure(in: paths.game, preferredAddress: opts.serverAddress)
 
+        // Личные моды игрока: копируем включённые из mods-custom в mods/.
+        CustomMods.apply(paths: paths) { LauncherModel.log($0) }
+
         let p = Process()
         p.executableURL = java
         p.arguments = args

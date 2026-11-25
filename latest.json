@@ -1,6 +1,6 @@
 {
-  "version": "1.6.4",
-  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.4/HomeCraft-macOS.zip",
-  "sha256": "0abec37a94c616233fc83165aba4c3e05bf0ad57246c22e0b6d9fda6e55eb2cf",
+  "version": "1.6.5",
+  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.5/HomeCraft-macOS.zip",
+  "sha256": "150d1840dfb69023c7f87f17ed737030d7f43e2e9d3e3a968a9283ce6b8bac43",
   "notes": "Автодобавление серверов HomeCraft в список Сетевой игры (servers.dat)"
 }

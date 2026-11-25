@@ -1,6 +1,6 @@
 {
-  "version": "1.6.7",
-  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.7/HomeCraft-macOS.zip",
-  "sha256": "921afb086110b78e5ffc46203fa18be6fcf694e45352fc00e2187329c9a4d1b3",
-  "notes": "Свои моды: папка mods-custom, которую не затрагивает общая сборка"
+  "version": "1.6.8",
+  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.8/HomeCraft-macOS.zip",
+  "sha256": "315657046354e75df19202369048d1c746b511a43bef0972592ba8a8cd12fb08",
+  "notes": "Готовый набор схем (Forgematica, BuildPrint) в личных модах: голограмма постройки и принтер"
 }

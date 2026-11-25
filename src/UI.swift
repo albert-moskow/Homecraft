@@ -49,6 +49,17 @@ struct ContentView: View {
                         if model.nickname.trimmingCharacters(in: .whitespaces).isEmpty {
                             Button("Указать ник в настройках") { showSettings = true }
                         }
+                        if !model.microphoneAuthorized {
+                            HStack(spacing: 10) {
+                                Button("Разрешить микрофон для Voice Chat") {
+                                    Task { await model.ensureMicrophoneAccess(forceReset: true) }
+                                }
+                                Button("Настройки macOS") {
+                                    model.openMicrophoneSettings()
+                                }
+                            }
+                            .font(.system(size: 11))
+                        }
                     }
                     .padding(.top, 64)
                 }
@@ -164,6 +175,25 @@ private struct LauncherSettingsView: View {
                 ), in: 2048...8192, step: 512)
                     .tint(.purple)
                     .accessibilityLabel("Память Minecraft")
+            }
+            .disabled(model.isBusy)
+
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Микрофон (Voice Chat)").font(.headline)
+                    Spacer()
+                    Text(model.microphoneStatusText)
+                        .font(.system(size: 12))
+                        .foregroundStyle(model.microphoneAuthorized ? .green : .orange)
+                }
+                HStack(spacing: 10) {
+                    Button("Запросить разрешение") {
+                        Task { await model.ensureMicrophoneAccess(forceReset: true) }
+                    }
+                    Button("Открыть настройки macOS") {
+                        model.openMicrophoneSettings()
+                    }
+                }
             }
             .disabled(model.isBusy)
 

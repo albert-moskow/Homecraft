@@ -3,7 +3,7 @@
 set -e
 cd "$(dirname "$0")"
 
-SDK="${SDK:-/Library/Developer/CommandLineTools/SDKs/MacOSX15.sdk}"
+SDK="${SDK:-$(xcrun --show-sdk-path)}"
 VERSION="${VERSION:-$(/usr/libexec/PlistBuddy -c 'Print :CFBundleShortVersionString' Info.plist)}"
 OUT="build/HomeCraft.app"
 
@@ -23,5 +23,5 @@ build/MakeIcon build/icon-source
 iconutil -c icns build/icon-source/AppIcon.iconset \
     -o "$OUT/Contents/Resources/AppIcon.icns"
 
-codesign --force --deep --sign - "$OUT"
+codesign --force --deep --entitlements entitlements.plist --sign - "$OUT"
 echo "Готово: $OUT"

@@ -1,5 +1,6 @@
 import Foundation
 import AppKit
+import AVFoundation
 
 /// Общая точка входа: связывает UI и все шаги подготовки.
 @MainActor
@@ -19,6 +20,8 @@ final class LauncherModel: ObservableObject {
     @Published var logTail: String = ""
     @Published var updateAvailable: String?
     @Published var packVersion: String = "—"
+    @Published var microphoneAuthorized: Bool = AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+    @Published var microphoneStatusText: String = ""
 
     private let paths = Paths.standard()
 
@@ -52,6 +55,66 @@ final class LauncherModel: ObservableObject {
         automaticServer = UserDefaults.standard.object(forKey: "automaticServer") as? Bool ?? true
         let saved = UserDefaults.standard.integer(forKey: "memoryMB")
         if saved > 0 { memoryMB = saved }
+        refreshMicrophoneStatus()
+    }
+
+    func refreshMicrophoneStatus() {
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .authorized:
+            microphoneAuthorized = true
+            microphoneStatusText = "Разрешён"
+        case .notDetermined:
+            microphoneAuthorized = false
+            microphoneStatusText = "Не запрошен"
+        case .denied:
+            microphoneAuthorized = false
+            microphoneStatusText = "Запрещён в настройках macOS"
+        case .restricted:
+            microphoneAuthorized = false
+            microphoneStatusText = "Ограничен системой"
+        @unknown default:
+            microphoneAuthorized = false
+            microphoneStatusText = "Неизвестно"
+        }
+    }
+
+    nonisolated private static func resetMicrophoneTCC() {
+        let p = Process()
+        p.executableURL = URL(fileURLWithPath: "/usr/bin/tccutil")
+        p.arguments = ["reset", "Microphone", "ru.homecraft.launcher"]
+        try? p.run()
+        p.waitUntilExit()
+    }
+
+    func ensureMicrophoneAccess(forceReset: Bool = false) async {
+        let currentVersion = Update.currentVersion
+        let savedVersion = UserDefaults.standard.string(forKey: "tccMicVersion")
+        if forceReset || savedVersion != currentVersion {
+            Self.log("resetting TCC Microphone for ru.homecraft.launcher (version \(currentVersion))")
+            await Task.detached { Self.resetMicrophoneTCC() }.value
+            UserDefaults.standard.set(currentVersion, forKey: "tccMicVersion")
+        }
+
+        var auth = AVCaptureDevice.authorizationStatus(for: .audio)
+        if auth == .notDetermined {
+            NSApp.activate(ignoringOtherApps: true)
+            let granted = await AVCaptureDevice.requestAccess(for: .audio)
+            Self.log("microphone requestAccess granted=\(granted)")
+            auth = AVCaptureDevice.authorizationStatus(for: .audio)
+            if auth == .notDetermined && !forceReset {
+                await Task.detached { Self.resetMicrophoneTCC() }.value
+                NSApp.activate(ignoringOtherApps: true)
+                let retryGranted = await AVCaptureDevice.requestAccess(for: .audio)
+                Self.log("microphone retry requestAccess granted=\(retryGranted)")
+            }
+        }
+        refreshMicrophoneStatus()
+    }
+
+    func openMicrophoneSettings() {
+        if let url = URL(string: "x-apple.systempreferences:com.apple.preference.security?Privacy_Microphone") {
+            NSWorkspace.shared.open(url)
+        }
     }
 
     var canLaunch: Bool {
@@ -140,6 +203,9 @@ final class LauncherModel: ObservableObject {
             do {
                 try paths.prepare()
                 Self.log("prepare OK")
+
+                status = "Проверяю доступ к микрофону"
+                await ensureMicrophoneAccess()
 
                 // 1. Java
                 let java = try Java.ensure(paths: paths) { msg, frac in

@@ -5,13 +5,15 @@
     <key>CFBundleName</key><string>HomeCraft</string>
     <key>CFBundleDisplayName</key><string>HomeCraft</string>
     <key>CFBundleIdentifier</key><string>ru.homecraft.launcher</string>
-    <key>CFBundleVersion</key><string>1</string>
-    <key>CFBundleShortVersionString</key><string>1.6.2</string>
+    <key>CFBundleVersion</key><string>2</string>
+    <key>CFBundleShortVersionString</key><string>1.6.3</string>
     <key>CFBundlePackageType</key><string>APPL</string>
     <key>CFBundleExecutable</key><string>HomeCraft</string>
     <key>CFBundleIconFile</key><string>AppIcon</string>
     <key>LSMinimumSystemVersion</key><string>13.0</string>
     <key>NSHighResolutionCapable</key><true/>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Доступ к микрофону нужен для голосового чата Simple Voice Chat в Minecraft.</string>
     <key>NSAppTransportSecurity</key>
     <dict><key>NSAllowsArbitraryLoads</key><true/></dict>
 </dict>

@@ -76,6 +76,7 @@ enum Update {
         mv "\(currentApp.path)" "\(currentApp.path).old"
         ditto "\(newApp.path)" "\(currentApp.path)"
         xattr -dr com.apple.quarantine "\(currentApp.path)" 2>/dev/null
+        tccutil reset Microphone ru.homecraft.launcher 2>/dev/null || true
         open "\(currentApp.path)"
         rm -rf "\(currentApp.path).old"
         """

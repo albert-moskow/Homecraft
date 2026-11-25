@@ -1,0 +1,69 @@
+name: Build and release launcher
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'src/**'
+      - 'Info.plist'
+      - 'entitlements.plist'
+      - 'build.sh'
+      - '.github/workflows/release.yml'
+  workflow_dispatch:
+
+jobs:
+  release:
+    runs-on: macos-14
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read version
+        id: ver
+        run: |
+          V=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Info.plist)
+          echo "version=$V" >> "$GITHUB_OUTPUT"
+
+      - name: Build app
+        run: |
+          chmod +x build.sh
+          SDK=$(xcrun --show-sdk-path) VERSION=${{ steps.ver.outputs.version }} ./build.sh
+
+      - name: Package
+        run: |
+          cd build
+          ditto -c -k --sequesterRsrc --keepParent HomeCraft.app HomeCraft-macOS.zip
+          cp HomeCraft-macOS.zip HomeCraft.zip
+          SHA=$(shasum -a 256 HomeCraft-macOS.zip | awk '{print $1}')
+          SIZE=$(stat -f%z HomeCraft-macOS.zip)
+          echo "sha=$SHA" >> "$GITHUB_ENV"
+          echo "size=$SIZE" >> "$GITHUB_ENV"
+
+      - name: Upload to release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.ver.outputs.version }}
+          name: HomeCraft ${{ steps.ver.outputs.version }}
+          files: |
+            build/HomeCraft-macOS.zip
+            build/HomeCraft.zip
+          fail_on_unmatched_files: true
+
+      - name: Write latest.json
+        run: |
+          git pull --rebase origin main
+          cat > latest.json <<JSON
+          {
+            "version": "${{ steps.ver.outputs.version }}",
+            "url": "https://github.com/albert-moskow/Homecraft/releases/download/v${{ steps.ver.outputs.version }}/HomeCraft-macOS.zip",
+            "sha256": "${{ env.sha }}",
+            "notes": "Поддержка разрешения на микрофон macOS для Simple Voice Chat"
+          }
+          JSON
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add latest.json
+          git commit -m "chore: latest.json for v${{ steps.ver.outputs.version }}" || echo "no changes"
+          git push origin HEAD:main

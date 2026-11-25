@@ -25,7 +25,10 @@ struct HomeCraftApp: App {
                 .environmentObject(model)
                 .frame(minWidth: 780, minHeight: 520)
                 .onAppear { model.checkForUpdates() }
-                .task { await model.refreshServerRoutes() }
+                .task {
+                    await model.ensureMicrophoneAccess()
+                    await model.refreshServerRoutes()
+                }
         }
         .windowResizability(.contentMinSize)
         .commands {

@@ -1,6 +1,6 @@
 {
-  "version": "1.6.5",
-  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.5/HomeCraft-macOS.zip",
-  "sha256": "150d1840dfb69023c7f87f17ed737030d7f43e2e9d3e3a968a9283ce6b8bac43",
-  "notes": "Автодобавление серверов HomeCraft в список Сетевой игры (servers.dat)"
+  "version": "1.6.6",
+  "url": "https://github.com/albert-moskow/Homecraft/releases/download/v1.6.6/HomeCraft-macOS.zip",
+  "sha256": "c7a6eb18eceffd1787677cec91a771455d499fb0e046b064b9f73dcfe2c0bae0",
+  "notes": "Автовключение ресурспаков Vanilla+, Fresh Animations и Default Dark Mode"
 }

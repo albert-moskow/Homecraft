@@ -336,6 +336,9 @@ enum Launch {
                 to: optionsFile, atomically: true, encoding: .utf8)
         }
 
+        // Автодобавление серверов HomeCraft в servers.dat (список «Сетевая игра»).
+        ServersDat.ensure(in: paths.game, preferredAddress: opts.serverAddress)
+
         let p = Process()
         p.executableURL = java
         p.arguments = args

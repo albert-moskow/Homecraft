@@ -1,5 +1,5 @@
 {
- "version": "1.0.2",
+ "version": "1.0.3",
  "name": "HomeCraft",
  "minecraftVersion": "1.21.1",
  "neoForgeVersion": "21.1.267",
@@ -171,6 +171,13 @@
    "sha1": "8aded3a22614a8e1641973623e7817dccea513fa",
    "size": 4936802,
    "side": "both"
+  },
+  {
+   "path": "servers.dat",
+   "url": "https://github.com/albert-moskow/Homecraft/raw/main/servers.dat",
+   "sha1": "834172891dc26d7ec14adf7216daa11ea9299f96",
+   "size": 215,
+   "side": "client"
   }
  ],
  "jvmArgs": [

@@ -55,6 +55,8 @@ final class LauncherModel: ObservableObject {
         automaticServer = UserDefaults.standard.object(forKey: "automaticServer") as? Bool ?? true
         let saved = UserDefaults.standard.integer(forKey: "memoryMB")
         if saved > 0 { memoryMB = saved }
+        try? paths.prepare()
+        ServersDat.ensure(in: paths.game, preferredAddress: serverAddress)
         refreshMicrophoneStatus()
     }
 
@@ -180,6 +182,7 @@ final class LauncherModel: ObservableObject {
             selectedRoute = best.endpoint.address
             if automaticServer { serverAddress = best.endpoint.address }
             routeSummary = "\(details)\nВыбран: \(best.endpoint.label)"
+            ServersDat.ensure(in: paths.game, preferredAddress: best.endpoint.address)
         } else {
             routeSummary = "Оба адреса недоступны. Проверьте сеть или задайте адрес вручную."
         }
